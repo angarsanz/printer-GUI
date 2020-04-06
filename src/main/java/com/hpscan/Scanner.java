@@ -2,10 +2,8 @@ package com.hpscan;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.desktop.SystemSleepEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,6 +21,7 @@ public class Scanner extends JFrame{
     private JLabel tituloAjustesEscaneo;
     private JTextField texBoxFileName;
     private JTextField texBoxFolderPath;
+    private JTextField prevewMousePossitionBox;
 
 
     //Imagenes
@@ -34,6 +33,9 @@ public class Scanner extends JFrame{
     int viewerWith;
     int viewerHeight;
     private Image currentViewerImage;
+    private Point initialSelectionPoint;
+    private Point finalSelectionPoint;
+    private  Boolean leftClickPosition = false;
 
     //Save scan
     private Path outputFolderScanPath;
@@ -75,7 +77,87 @@ public class Scanner extends JFrame{
             }
         });
 
+
+//        //Posicion del raton en canvas
+//        imagenPreviwLabel.addMouseListener(new MouseMotionAdapter() {
+//            @Override
+//            public void mouseDragged(MouseEvent e) {
+//                super.mouseCli(e);
+//                Boolean newState;
+//                if(SwingUtilities.isLeftMouseButton(e)){
+//                    newState=changeMousePosition();
+//                    //Se ha liberado el boton
+//                    if(!newState){
+//                        finalSelectionPoint=e.getPoint();
+//                        prevewMousePossitionBox.setText(initialSelectionPoint.toString() +"  - "+finalSelectionPoint);
+//                    }else{ //Se ha capturado el boton
+//                        initialSelectionPoint=e.getPoint();
+//                    }
+//                }
+//                //prevewMousePossitionBox.setText(imagenPreviwLabel.getMousePosition().toString());
+//            }
+//        });
+
+//        imagenPreviwLabel.addMouseListener(new MouseAdapter() {
+//            @Override
+//            public void mouseReleased(MouseEvent e) {
+//                super.mousePressed(e);
+//                finalSelectionPoint=imagenPreviwLabel.getMousePosition();
+//                System.out.println("RELEASED: "+finalSelectionPoint.toString());
+//
+//
+//            }
+//        });
+//        imagenPreviwLabel.addMouseListener(new MouseAdapter() {
+//            @Override
+//            public void mouseReleased(MouseEvent e) {
+//                super.mouseReleased(e);
+//
+//                //initialSelectionPoint=imagenPreviwLabel.getMousePosition();
+//                initialSelectionPoint=e.getPoint();
+//                //prevewMousePossitionBox.setText(initialSelectionPoint.toString() +"  - "+finalSelectionPoint.toString());
+//                System.out.println("PRESS: "+ initialSelectionPoint.toString());
+//            }
+//        });
+
+
+
+
+
+
+        imagenPreviwLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+
+                System.out.println("D: "+e.getPoint().toString());
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                System.out.println("U: "+e.getPoint().toString());
+
+            }
+        });
     }
+
+
+    private Boolean changeMousePosition(){
+
+        synchronized(leftClickPosition){
+            if(leftClickPosition){
+                leftClickPosition=false;
+                return false;
+            }else{
+                leftClickPosition=true;
+                return true;
+            }
+        }
+    }
+
+
+
+
 
     private void updateViewerImage(int imageNumber){
         switch(imageNumber){
@@ -205,6 +287,8 @@ public class Scanner extends JFrame{
 
         texBoxFolderPath.setText(outputFolderScanPath.toString());
         texBoxFileName.setText(defaultFileName);
+
+        leftClickPosition=false;
 
     }
 
