@@ -65,8 +65,8 @@
             <properties>
               <model>
                 <item value="color"/>
-                <item value="escala de grises"/>
-                <item value="lineart (B/W)"/>
+                <item value="gray"/>
+                <item value="lineart"/>
               </model>
             </properties>
           </component>
