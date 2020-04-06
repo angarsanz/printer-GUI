@@ -33,7 +33,14 @@ public class Scanner extends JFrame{
     //Current Preview
     int viewerWith;
     int viewerHeight;
-    Image currentViewerImage;
+    private Image currentViewerImage;
+
+    //Save scan
+    private Path outputFolderScanPath;
+    final String defaultFileName = "Imagen.png";
+    private String fileName;
+
+
 
 
     public Scanner() {
@@ -41,7 +48,7 @@ public class Scanner extends JFrame{
         add(root);
         //Crea el tamño de la ventana en funcion de el tamaño de la pantalla
         normalizeWindowsSize();
-
+        setDefaultValues();
 
 
         scanButton.addActionListener(new ActionListener() {
@@ -73,10 +80,16 @@ public class Scanner extends JFrame{
     private void updateViewerImage(int imageNumber){
         switch(imageNumber){
             case 1:
-                imagenPreviwLabel.setIcon(imagen1);
+                setViewerImage(imagen1.getImage());
+                //currentViewerImage=imagen1.getImage();
+                updateViewerSize();
+                //imagenPreviwLabel.setIcon(imagen1);
                 break;
             case 2:
-                imagenPreviwLabel.setIcon(imagen2);
+                setViewerImage(imagen2.getImage());
+                //currentViewerImage=imagen2.getImage();
+                updateViewerSize();
+                //imagenPreviwLabel.setIcon(imagen2);
                 break;
             default :
                 System.out.println("No se reconoce el valor");
@@ -176,14 +189,29 @@ public class Scanner extends JFrame{
 
         //imagenPreviwLabel.setIcon(imagen3);
 
+    }
 
+    public void setViewerImage(Image newImage){
+        synchronized (currentViewerImage){
+
+            currentViewerImage=newImage;
+        }
+
+    }
+
+    public void setDefaultValues(){
+
+        outputFolderScanPath =  Path.of(System.getProperty("user.home"),"Escritorio");
+
+        texBoxFolderPath.setText(outputFolderScanPath.toString());
+        texBoxFileName.setText(defaultFileName);
 
     }
 
 
     ////////////////////////////LANZAR COMANDOS////////////////////////////
     public void runScan(Path filePath, String fileName, int dpiResolution, String colorSpace) {
-        String destinationPath=filePath+fileName;
+        String destinationPath=Path.of(filePath+fileName).toString();
 
 
         String comandoDeEscaneo="hp-scan "+"--mode "+colorSpace+" --resolution "+dpiResolution+" --dest "+destinationPath;
