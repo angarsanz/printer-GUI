@@ -7,20 +7,22 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Scanner extends JFrame{
     private JPanel root;
     private JButton scanButton;
     private JButton previwButton;
-    private JComboBox comboBox1;
-    private JComboBox comboBox2;
-    private JComboBox comboBox3;
+    private JComboBox comboBoxResolution;
+    private JComboBox comboBoxColorSpace;
+    private JComboBox comboBoxExtension;
     private JLabel imagenPreviwLabel;
     private JTextField windowsSizeTexBox;
     private JPanel configurationPanel;
     private JLabel tituloAjustesEscaneo;
-    private JTextField textField1;
-    private JTextField textField2;
+    private JTextField texBoxFileName;
+    private JTextField texBoxFolderPath;
 
 
     //Imagenes
@@ -48,6 +50,10 @@ public class Scanner extends JFrame{
                 //JOptionPane.showMessageDialog(panel1, "Hola: "+screenSize.getHeight()+" - "+screenSize.getWidth());
                 //imagenPreviwLabel = new JLabel(new ImageIcon("C:\\Users\\angar\\IdeaProjects\\printer-GUI\\src\\main\\resources\\vlcsnap-2018-06-29-16h44m46s273.png"));
                 updateViewerImage(1);
+
+                runScan(Paths.get(texBoxFolderPath.getText()), texBoxFileName.getText(),Integer.parseInt(comboBoxResolution.getSelectedItem().toString()),comboBoxColorSpace.getSelectedItem().toString());
+
+
             }
         });
 
@@ -173,4 +179,18 @@ public class Scanner extends JFrame{
 
 
     }
+
+
+    ////////////////////////////LANZAR COMANDOS////////////////////////////
+    public void runScan(Path filePath, String fileName, int dpiResolution, String colorSpace) {
+        String destinationPath=filePath+fileName;
+
+
+        String comandoDeEscaneo="hp-scan "+"--mode "+colorSpace+" --resolution "+dpiResolution+" --dest "+destinationPath;
+        //ProcessBuilder builder = new ProcessBuilder();
+        //builder.command(comandoDeEscaneo);
+        System.out.println(comandoDeEscaneo);
+    }
+
+
 }

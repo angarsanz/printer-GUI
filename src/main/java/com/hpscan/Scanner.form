@@ -45,7 +45,7 @@
               <text value="Previw"/>
             </properties>
           </component>
-          <component id="e3719" class="javax.swing.JComboBox" binding="comboBox1" default-binding="true">
+          <component id="e3719" class="javax.swing.JComboBox" binding="comboBoxResolution">
             <constraints>
               <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -58,7 +58,7 @@
               </model>
             </properties>
           </component>
-          <component id="3efdf" class="javax.swing.JComboBox" binding="comboBox2" default-binding="true">
+          <component id="3efdf" class="javax.swing.JComboBox" binding="comboBoxColorSpace">
             <constraints>
               <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -70,7 +70,7 @@
               </model>
             </properties>
           </component>
-          <component id="c9b68" class="javax.swing.JComboBox" binding="comboBox3" default-binding="true">
+          <component id="c9b68" class="javax.swing.JComboBox" binding="comboBoxExtension">
             <constraints>
               <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -90,7 +90,7 @@
               <text value="Nombre del fichero"/>
             </properties>
           </component>
-          <component id="90d86" class="javax.swing.JTextField" binding="textField1" default-binding="true">
+          <component id="90d86" class="javax.swing.JTextField" binding="texBoxFileName">
             <constraints>
               <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -106,7 +106,7 @@
               <text value="Path de guardado"/>
             </properties>
           </component>
-          <component id="5ba24" class="javax.swing.JTextField" binding="textField2" default-binding="true">
+          <component id="5ba24" class="javax.swing.JTextField" binding="texBoxFolderPath">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
