@@ -22,7 +22,9 @@ public class Scanner extends JFrame{
     private JTextField texBoxFileName;
     private JTextField texBoxFolderPath;
     private JTextField prevewMousePossitionBox;
-
+    private JPanel PanelVisualizacion;
+    private JPanel testJPanel;
+    private JEditorPane editorPane1;
 
     //Imagenes
     ImageIcon imagen2;
@@ -139,6 +141,12 @@ public class Scanner extends JFrame{
 
             }
         });
+        previwButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                paintRectangle();
+            }
+        });
     }
 
 
@@ -172,6 +180,7 @@ public class Scanner extends JFrame{
                 //currentViewerImage=imagen2.getImage();
                 updateViewerSize();
                 //imagenPreviwLabel.setIcon(imagen2);
+
                 break;
             default :
                 System.out.println("No se reconoce el valor");
@@ -180,6 +189,7 @@ public class Scanner extends JFrame{
     }
     private void updateViewerImage(ImageIcon newImage){
         imagenPreviwLabel.setIcon(newImage);
+
     }
 
     private void updateViewerSize(){
@@ -292,8 +302,80 @@ public class Scanner extends JFrame{
 
     }
 
+    public void paintRectangle(){
+System.out.println("Layered");
 
-    ////////////////////////////LANZAR COMANDOS////////////////////////////
+        JLayeredPane layeredPane = new JLayeredPane();
+        layeredPane.setBackground(Color.RED);
+        //Rectangles rects = new Rectangles();
+        layeredPane.setBorder(BorderFactory.createTitledBorder("Move the Mouse to Move Duke"));
+
+
+        JButton top = new JButton();
+        top.setBackground(Color.white);
+        top.setBounds(20, 20, 50, 50);
+        JButton middle = new JButton();
+        middle.setBackground(Color.red);
+        middle.setBounds(40, 40, 50, 50);
+        JButton bottom = new JButton();
+        bottom.setBackground(Color.cyan);
+        bottom.setBounds(60, 60, 50, 50);
+        Rectangles rects = new Rectangles();
+        rects.setBackground(Color.orange);
+        rects.setBounds(0, 0, testJPanel.getWidth(), testJPanel.getHeight());
+        //adding buttons on pane
+        layeredPane.add(bottom, new Integer(1));
+        layeredPane.add(middle, new Integer(2));
+        layeredPane.add(top, new Integer(3));
+        layeredPane.add(rects, new Integer(0));
+
+
+//        layeredPane.add(rects, 1);
+//        layeredPane.validate();
+//        JLabel etiqueta =new JLabel("etiqueta");
+//        etiqueta.setAlignmentX(0.0f);
+//        etiqueta.setText("Hola");
+//        etiqueta.setVisible(true);
+//        etiqueta.setLocation(new Point(testJPanel.getX(),testJPanel.getY()));
+//        layeredPane.add(etiqueta, 2);
+//        //testJPanel.add(etiqueta);
+//layeredPane.validate();
+        testJPanel.add(layeredPane);
+        testJPanel.validate();
+        System.out.println(testJPanel.getComponents().length);
+        //System.out.println(testJPanel.getComponents()[0].toString());
+
+        //imagenPreviwLabel.getConten.add(rectangle);
+    }
+    class selectedArea extends JComponent {
+        String s = "message";
+        int x = 45;
+        int y = 45;
+        public void paint(Graphics g) {
+            g.drawRect (10, 10, 200, 200);
+            g.setColor(Color.red);
+            g.drawString(s, x, y);
+        }
+    }
+
+    public class Rectangles extends JPanel {
+
+        public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D) g;
+
+            g2d.setColor(new Color(212, 212, 212));
+            g2d.drawRect(10, 15, 90, 60);
+
+
+            g2d.setColor(new Color(31, 21, 1));
+            g2d.fillRect(250, 195, 90, 60);
+
+        }
+
+    }
+
+    ////////////////////////////LANZAR COMANDOS DE SISTEMA////////////////////////////
     public void runScan(Path filePath, String fileName, int dpiResolution, String colorSpace) {
         String destinationPath=Path.of(filePath+fileName).toString();
 
