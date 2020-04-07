@@ -1,6 +1,7 @@
 package com.hpscan;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -40,7 +41,7 @@ public class Scanner extends JFrame{
     private Point initialSelectionPoint;
     private Point finalSelectionPoint;
     private  Boolean leftClickPosition = false;
-    Rectangles selector;
+    JLabel selector;
 
     //Save scan
     private Path outputFolderScanPath;
@@ -55,7 +56,7 @@ public class Scanner extends JFrame{
         add(root);
         imagePreviwLabel = new JLabel();
         previewLayeredPanel = new JLayeredPane();
-        previewLayeredPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        panelPreview.setLayout(new BoxLayout(panelPreview,BoxLayout.Y_AXIS));
         //Crea el tamño de la ventana en funcion de el tamaño de la pantalla
         normalizeWindowsSize();
         setDefaultValues();
@@ -218,11 +219,16 @@ public class Scanner extends JFrame{
         //imagePreviwLabel = new JLabel();
 
 
-        selector = new Rectangles();
-        selector.setBackground(Color.RED);
+        selector = new JLabel();
+        selector.setBackground(Color.red);
+        selector.setVisible(true);
+        //selector.setText("dfsdsfdsfdsfdsfds");
         selector.setBounds(0, 0, 100, 100);
+        selector.setSize(400,500);
+        Border selectorBorder = BorderFactory.createLineBorder(Color.BLUE, 2);
+        selector.setBorder(selectorBorder);
 
-        imagePreviwLabel.setBounds(0,0,100,200);
+        imagePreviwLabel.setBounds(100,200,100,200);
         //adding buttons on panel
         previewLayeredPanel.add(selector, 0);
         previewLayeredPanel.add(imagePreviwLabel, 1);
