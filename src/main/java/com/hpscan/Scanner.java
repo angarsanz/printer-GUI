@@ -87,56 +87,6 @@ public class Scanner extends JFrame{
         });
 
 
-//        //Posicion del raton en canvas
-//        imagenPreviwLabel.addMouseListener(new MouseMotionAdapter() {
-//            @Override
-//            public void mouseDragged(MouseEvent e) {
-//                super.mouseCli(e);
-//                Boolean newState;
-//                if(SwingUtilities.isLeftMouseButton(e)){
-//                    newState=changeMousePosition();
-//                    //Se ha liberado el boton
-//                    if(!newState){
-//                        finalSelectionPoint=e.getPoint();
-//                        prevewMousePossitionBox.setText(initialSelectionPoint.toString() +"  - "+finalSelectionPoint);
-//                    }else{ //Se ha capturado el boton
-//                        initialSelectionPoint=e.getPoint();
-//                    }
-//                }
-//                //prevewMousePossitionBox.setText(imagenPreviwLabel.getMousePosition().toString());
-//            }
-//        });
-
-//        imagenPreviwLabel.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mouseReleased(MouseEvent e) {
-//                super.mousePressed(e);
-//                finalSelectionPoint=imagenPreviwLabel.getMousePosition();
-//                System.out.println("RELEASED: "+finalSelectionPoint.toString());
-//
-//
-//            }
-//        });
-
-
-
-
-//        imagePreviwLabel.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mouseReleased(MouseEvent e) {
-//                super.mouseReleased(e);
-//
-//                //initialSelectionPoint=imagenPreviwLabel.getMousePosition();
-//                initialSelectionPoint=e.getPoint();
-//                //prevewMousePossitionBox.setText(initialSelectionPoint.toString() +"  - "+finalSelectionPoint.toString());
-//                System.out.println("PRESS: "+ initialSelectionPoint.toString());
-//            }
-//        });
-
-
-
-
-
 
         imagePreviwLabel.addMouseListener(new MouseAdapter() {
             @Override
