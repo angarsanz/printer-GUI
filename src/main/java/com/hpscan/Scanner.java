@@ -2,7 +2,6 @@ package com.hpscan;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.desktop.SystemSleepEvent;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.nio.file.Path;
@@ -15,15 +14,16 @@ public class Scanner extends JFrame{
     private JComboBox comboBoxResolution;
     private JComboBox comboBoxColorSpace;
     private JComboBox comboBoxExtension;
-    private JLabel imagenPreviwLabel;
+
     private JTextField windowsSizeTexBox;
     private JPanel configurationPanel;
     private JLabel tituloAjustesEscaneo;
     private JTextField texBoxFileName;
     private JTextField texBoxFolderPath;
     private JTextField prevewMousePossitionBox;
-    private JPanel PanelVisualizacion;
-    private JPanel testJPanel;
+    private JPanel PanelDerecho;
+    private JPanel panelHUD;
+    private JPanel panelPreview;
     private JEditorPane editorPane1;
 
     //Imagenes
@@ -34,6 +34,8 @@ public class Scanner extends JFrame{
     //Current Preview
     int viewerWith;
     int viewerHeight;
+    JLayeredPane previewLayeredPanel;
+    private JLabel imagePreviwLabel;
     private Image currentViewerImage;
     private Point initialSelectionPoint;
     private Point finalSelectionPoint;
@@ -50,6 +52,8 @@ public class Scanner extends JFrame{
     public Scanner() {
         setTitle("Scanner");
         add(root);
+        imagePreviwLabel = new JLabel();
+        previewLayeredPanel = new JLayeredPane();
         //Crea el tamño de la ventana en funcion de el tamaño de la pantalla
         normalizeWindowsSize();
         setDefaultValues();
@@ -127,7 +131,7 @@ public class Scanner extends JFrame{
 
 
 
-        imagenPreviwLabel.addMouseListener(new MouseAdapter() {
+        imagePreviwLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
@@ -144,7 +148,7 @@ public class Scanner extends JFrame{
         previwButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                paintRectangle();
+               // paintRectangle();
             }
         });
     }
@@ -188,11 +192,88 @@ public class Scanner extends JFrame{
         }
     }
     private void updateViewerImage(ImageIcon newImage){
-        imagenPreviwLabel.setIcon(newImage);
+        imagePreviwLabel.setIcon(newImage);
 
     }
 
+    /////////////////INICIO PREVIEW//////////////
+    private void initPreviewPanel(){
+
+
+
+       // JLayeredPane previewLayeredPanel = new JLayeredPane();
+        previewLayeredPanel.setBackground(Color.RED);
+        previewLayeredPanel.setBorder(BorderFactory.createTitledBorder("Move the Mouse to Move Duke"));
+
+        //imagePreviwLabel = new JLabel();
+
+
+        Rectangles selector = new Rectangles();
+        selector.setBackground(Color.orange);
+        selector.setBounds(0, 0, 100, 100);
+        //adding buttons on panel
+        previewLayeredPanel.add(selector, 1);
+        previewLayeredPanel.add(imagePreviwLabel, 2);
+
+        //Carga el contenido en el panel
+        panelPreview.add(previewLayeredPanel);
+        panelPreview.validate();
+
+    }
+    private void UpdatePreviewPanelSize(){
+
+
+    }
+
+    /////////////////FINAL PREVIEW//////////////////
+
+
+    public void paintRectangle(){
+        System.out.println("Layered");
+
+        JLayeredPane layeredPane = new JLayeredPane();
+        layeredPane.setBackground(Color.RED);
+        layeredPane.setBounds(0,0,300,300);
+        //Rectangles rects = new Rectangles();
+        layeredPane.setBorder(BorderFactory.createTitledBorder("Move the Mouse to Move Duke"));
+
+        int availableWith = root.getWidth() - configurationPanel.getWidth();
+        //int availableHeight = root.getHeight() -
+        //int availableWith = imagenPreviwLabel.getWidth();
+        int availableHeight = root.getHeight()-windowsSizeTexBox.getHeight()-tituloAjustesEscaneo.getHeight()-10;
+
+
+//        JButton top = new JButton();
+//        top.setBackground(Color.white);
+//        top.setBounds(20, 20, 50, 50);
+//        JButton middle = new JButton();
+//        middle.setBackground(Color.red);
+//        middle.setBounds(40, 40, 50, 50);
+//        JButton bottom = new JButton();
+//        bottom.setBackground(Color.cyan);
+//        bottom.setBounds(60, 60, 50, 50);
+        Rectangles rects = new Rectangles();
+        rects.setBackground(Color.orange);
+        rects.setBounds(0, 0, 100, 200);
+        //adding buttons on pane
+//        layeredPane.add(bottom, new Integer(1));
+//        layeredPane.add(middle, new Integer(2));
+//        layeredPane.add(top, new Integer(3));
+        layeredPane.add(rects, new Integer(0));
+
+        panelPreview.add(layeredPane);
+        panelPreview.validate();
+        System.out.println(panelPreview.getComponents().length);
+        //System.out.println(testJPanel.getComponents()[0].toString());
+
+        //imagenPreviwLabel.getConten.add(rectangle);
+    }
+
+
     private void updateViewerSize(){
+
+
+
         if(currentViewerImage!=null) {
             //valores de la ventana
             int currentWindowWith = root.getWidth();
@@ -221,6 +302,11 @@ public class Scanner extends JFrame{
             //updateViewerImage(new ImageIcon(getScaledImage(scaledViewerImage.getImage(), proporcionW)));
             //imagen3.setImage(getScaledImage(scaledViewerImage.getImage(), proporcion));
             //imagenPreviwLabel.setIcon(imagen3);
+        }else{
+            //No se ha cargado la imagen por lo que se creara la vista
+
+            initPreviewPanel();
+
         }
     }
     private void normalizeWindowsSize(){
@@ -269,13 +355,15 @@ public class Scanner extends JFrame{
     private void createUIComponents() {
         // TODO: place custom component creation code here
         //imagenPreviwLabel = new JLabel(new ImageIcon("C:\\Users\\angar\\IdeaProjects\\printer-GUI\\src\\main\\resources\\Sin título-1.jpg"));
-        imagenPreviwLabel= new JLabel();
+        imagePreviwLabel = new JLabel();
         imagen2= new ImageIcon("C:\\Users\\angar\\IdeaProjects\\printer-GUI\\src\\main\\resources\\vlcsnap-2018-06-29-16h44m46s273.png");
         imagen1= new ImageIcon("C:\\Users\\angar\\IdeaProjects\\printer-GUI\\src\\main\\resources\\Sin título-1.jpg");
         imagen3= new ImageIcon("C:\\Users\\angar\\IdeaProjects\\printer-GUI\\src\\main\\resources\\hpscan001.png");
 
 
         currentViewerImage=imagen3.getImage();
+
+
        // updateViewerSize();
         //imagen3.setImage(getScaledImage(imagen3.getImage(),0.10f));
 
@@ -300,53 +388,9 @@ public class Scanner extends JFrame{
 
         leftClickPosition=false;
 
+
     }
 
-    public void paintRectangle(){
-System.out.println("Layered");
-
-        JLayeredPane layeredPane = new JLayeredPane();
-        layeredPane.setBackground(Color.RED);
-        //Rectangles rects = new Rectangles();
-        layeredPane.setBorder(BorderFactory.createTitledBorder("Move the Mouse to Move Duke"));
-
-
-        JButton top = new JButton();
-        top.setBackground(Color.white);
-        top.setBounds(20, 20, 50, 50);
-        JButton middle = new JButton();
-        middle.setBackground(Color.red);
-        middle.setBounds(40, 40, 50, 50);
-        JButton bottom = new JButton();
-        bottom.setBackground(Color.cyan);
-        bottom.setBounds(60, 60, 50, 50);
-        Rectangles rects = new Rectangles();
-        rects.setBackground(Color.orange);
-        rects.setBounds(0, 0, testJPanel.getWidth(), testJPanel.getHeight());
-        //adding buttons on pane
-        layeredPane.add(bottom, new Integer(1));
-        layeredPane.add(middle, new Integer(2));
-        layeredPane.add(top, new Integer(3));
-        layeredPane.add(rects, new Integer(0));
-
-
-//        layeredPane.add(rects, 1);
-//        layeredPane.validate();
-//        JLabel etiqueta =new JLabel("etiqueta");
-//        etiqueta.setAlignmentX(0.0f);
-//        etiqueta.setText("Hola");
-//        etiqueta.setVisible(true);
-//        etiqueta.setLocation(new Point(testJPanel.getX(),testJPanel.getY()));
-//        layeredPane.add(etiqueta, 2);
-//        //testJPanel.add(etiqueta);
-//layeredPane.validate();
-        testJPanel.add(layeredPane);
-        testJPanel.validate();
-        System.out.println(testJPanel.getComponents().length);
-        //System.out.println(testJPanel.getComponents()[0].toString());
-
-        //imagenPreviwLabel.getConten.add(rectangle);
-    }
     class selectedArea extends JComponent {
         String s = "message";
         int x = 45;
