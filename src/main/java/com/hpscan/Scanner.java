@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
@@ -35,6 +36,7 @@ public class Scanner extends JFrame{
     ImageIcon imagen2;
     ImageIcon imagen1;
     ImageIcon imagen3;
+    ImageIcon previewImageIcon;
 
     //Current Preview
     int viewerWith;
@@ -71,7 +73,7 @@ public class Scanner extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 //JOptionPane.showMessageDialog(panel1, "Hola: "+screenSize.getHeight()+" - "+screenSize.getWidth());
                 //imagenPreviwLabel = new JLabel(new ImageIcon("C:\\Users\\angar\\IdeaProjects\\printer-GUI\\src\\main\\resources\\vlcsnap-2018-06-29-16h44m46s273.png"));
-                updateViewerImage(1);
+                //updateViewerImage(1);
 
                 runScan(Paths.get(texBoxFolderPath.getText()), texBoxFileName.getText(),Integer.parseInt(comboBoxResolution.getSelectedItem().toString()),comboBoxColorSpace.getSelectedItem().toString());
 
@@ -114,20 +116,26 @@ public class Scanner extends JFrame{
                // paintRectangle();
                 //get File path
 
-                String tmpFilename="scanner-"+ThreadLocalRandom.current().nextInt(1, 100)+".tmp";
+                String tmpFilename="scanner-"+ThreadLocalRandom.current().nextInt(1, 100)+".jpg";
                 Path previewImagePath = Path.of(System.getProperty("java.io.tmpdir"));
                 //Lock graphical interface
 
                 //Scan
-                runScan(previewImagePath,tmpFilename,180,"color");
+                runScan(previewImagePath,tmpFilename,75,"color");
 
                 //Wait untilFinish
 
                 //Remplace image
-                ImageIcon previewImageIcon= new ImageIcon(previewImagePath+tmpFilename);
+                System.out.println(previewImagePath.toString()+"/"+tmpFilename);
+                previewImageIcon = new ImageIcon(Path.of(previewImagePath.toString(),tmpFilename).toString());
+                System.out.println(">>>>>>"+previewImageIcon.getIconHeight());
                 setViewerImage(previewImageIcon.getImage());
-                //Remove prevew Image
+                //updatePreviewPanelSize();
+                updateViewerSize();
 
+                //Remove prevew Image
+                File temporalFile = new File(Path.of(previewImagePath.toString(),tmpFilename).toString());
+                temporalFile.delete();
             }
         });
     }
@@ -208,7 +216,7 @@ public class Scanner extends JFrame{
         panelPreview.validate();
         //previewLayeredPanel.setBounds(0,0,previewLayeredPanel.getWidth(),previewLayeredPanel.getHeight());
     }
-    private void UpdatePreviewPanelSize(){
+    private void updatePreviewPanelSize(){
         //selector.setBounds(0, 0, panelPreview.getWidth(), 100);
         imagePreviwLabel.setBounds(0,0,panelPreview.getWidth(),panelPreview.getHeight());
         selector.setBounds(0,0,panelPreview.getWidth(),panelPreview.getHeight());
@@ -233,7 +241,7 @@ public class Scanner extends JFrame{
     private void updateViewerSize(){
 
         if(currentViewerImage!=null) {
-            UpdatePreviewPanelSize();
+            updatePreviewPanelSize();
             //valores de la ventana
             int currentWindowWith = root.getWidth();
             int currentWindowHeight = root.getHeight();
@@ -389,12 +397,12 @@ public class Scanner extends JFrame{
     public void runScan(Path filePath, String fileName, int dpiResolution, String colorSpace) {
 
         String destinationPath=Path.of(filePath.toString(),fileName).toString();
-        String scanBashCommand="hp-scan "+"--mode="+colorSpace+" --resolution="+dpiResolution+" --output="+destinationPath;
+        String scanBashCommand="hp-scan "+"--mode="+colorSpace+" --resolution="+dpiResolution+" -f "+destinationPath;
         String result=null;
 
         try {
             System.out.println("Se va a lanzar el comando: "+scanBashCommand);
-            Process process = Runtime.getRuntime().exec("bash -c "+scanBashCommand);
+            Process process = Runtime.getRuntime().exec(scanBashCommand);
 
             BufferedReader in =
                     new BufferedReader(new InputStreamReader(process.getInputStream()));

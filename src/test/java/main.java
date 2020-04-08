@@ -7,7 +7,7 @@ public class main{
     public static void main(String args[]) throws IOException {
         String result = null;
         System.out.println(">Se va a lanzar ls");
-        Process process = Runtime.getRuntime().exec("bash -c hp-scan -m color -r 70");
+        Process process = Runtime.getRuntime().exec("hp-scan -m color -r 70");
         //Runtime.getRuntime().exec("bash -c ls -la");
         try {
             //process.waitFor();
