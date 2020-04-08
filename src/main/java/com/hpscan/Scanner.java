@@ -5,8 +5,12 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Scanner extends JFrame{
     private JPanel root;
@@ -108,6 +112,22 @@ public class Scanner extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                // paintRectangle();
+                //get File path
+
+                String tmpFilename="scanner-"+ThreadLocalRandom.current().nextInt(1, 100)+".tmp";
+                Path previewImagePath = Path.of(System.getProperty("java.io.tmpdir"));
+                //Lock graphical interface
+
+                //Scan
+                runScan(previewImagePath,tmpFilename,180,"color");
+
+                //Wait untilFinish
+
+                //Remplace image
+                ImageIcon previewImageIcon= new ImageIcon(previewImagePath+tmpFilename);
+                setViewerImage(previewImageIcon.getImage());
+                //Remove prevew Image
+
             }
         });
     }
@@ -318,9 +338,9 @@ public class Scanner extends JFrame{
         leftClickPosition=false;
 
         //Cargar imagenes de test
-        imagen2= new ImageIcon("C:\\Users\\angar\\IdeaProjects\\printer-GUI\\src\\main\\resources\\vlcsnap-2018-06-29-16h44m46s273.png");
-        imagen1= new ImageIcon("C:\\Users\\angar\\IdeaProjects\\printer-GUI\\src\\main\\resources\\Sin título-1.jpg");
-        imagen3= new ImageIcon("C:\\Users\\angar\\IdeaProjects\\printer-GUI\\src\\main\\resources\\hpscan001.png");
+        //imagen2= new ImageIcon("C:\\Users\\angar\\IdeaProjects\\printer-GUI\\src\\main\\resources\\vlcsnap-2018-06-29-16h44m46s273.png");
+        imagen1= new ImageIcon("/home/anto/IdeaProjects/printer-GUI/src/main/resources/Sin título-1.jpg");
+        imagen3= new ImageIcon("/home/anto/IdeaProjects/printer-GUI/src/main/resources/hpscan001.png");
 
         System.out.println("LoadImage>>>>>>>>>>>>>>>>>>>");
         currentViewerImage=imagen3.getImage();
@@ -367,13 +387,30 @@ public class Scanner extends JFrame{
 
     ////////////////////////////LANZAR COMANDOS DE SISTEMA////////////////////////////
     public void runScan(Path filePath, String fileName, int dpiResolution, String colorSpace) {
-        String destinationPath=Path.of(filePath+fileName).toString();
 
+        String destinationPath=Path.of(filePath.toString(),fileName).toString();
+        String scanBashCommand="hp-scan "+"--mode="+colorSpace+" --resolution="+dpiResolution+" --output="+destinationPath;
+        String result=null;
 
-        String comandoDeEscaneo="hp-scan "+"--mode "+colorSpace+" --resolution "+dpiResolution+" --dest "+destinationPath;
+        try {
+            System.out.println("Se va a lanzar el comando: "+scanBashCommand);
+            Process process = Runtime.getRuntime().exec("bash -c "+scanBashCommand);
+
+            BufferedReader in =
+                    new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                System.out.println(inputLine);
+                result += inputLine;
+            }
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         //ProcessBuilder builder = new ProcessBuilder();
         //builder.command(comandoDeEscaneo);
-        System.out.println(comandoDeEscaneo);
+        //System.out.println(comandoDeEscaneo);
     }
 
 
