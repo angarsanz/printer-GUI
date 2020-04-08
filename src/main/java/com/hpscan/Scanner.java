@@ -28,9 +28,9 @@ public class Scanner extends JFrame{
     private JEditorPane editorPane1;
 
     //Imagenes
-    ImageIcon imagen2;
-    ImageIcon imagen1;
-    ImageIcon imagen3;
+//    ImageIcon imagen2;
+//    ImageIcon imagen1;
+//    ImageIcon imagen3;
 
     //Current Preview
     int viewerWith;
@@ -67,7 +67,7 @@ public class Scanner extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 //JOptionPane.showMessageDialog(panel1, "Hola: "+screenSize.getHeight()+" - "+screenSize.getWidth());
                 //imagenPreviwLabel = new JLabel(new ImageIcon("C:\\Users\\angar\\IdeaProjects\\printer-GUI\\src\\main\\resources\\vlcsnap-2018-06-29-16h44m46s273.png"));
-                updateViewerImage(1);
+//                updateViewerImage(1);
 
                 runScan(Paths.get(texBoxFolderPath.getText()), texBoxFileName.getText(),Integer.parseInt(comboBoxResolution.getSelectedItem().toString()),comboBoxColorSpace.getSelectedItem().toString());
 
@@ -130,26 +130,26 @@ public class Scanner extends JFrame{
 
 
 
-    private void updateViewerImage(int imageNumber){
-        switch(imageNumber){
-            case 1:
-                setViewerImage(imagen1.getImage());
-                //currentViewerImage=imagen1.getImage();
-                updateViewerSize();
-                //imagenPreviwLabel.setIcon(imagen1);
-                break;
-            case 2:
-                setViewerImage(imagen2.getImage());
-                //currentViewerImage=imagen2.getImage();
-                updateViewerSize();
-                //imagenPreviwLabel.setIcon(imagen2);
-
-                break;
-            default :
-                System.out.println("No se reconoce el valor");
-
-        }
-    }
+//    private void updateViewerImage(int imageNumber){
+//        switch(imageNumber){
+//            case 1:
+//                setViewerImage(imagen1.getImage());
+//                //currentViewerImage=imagen1.getImage();
+//                updateViewerSize();
+//                //imagenPreviwLabel.setIcon(imagen1);
+//                break;
+//            case 2:
+//                setViewerImage(imagen2.getImage());
+//                //currentViewerImage=imagen2.getImage();
+//                updateViewerSize();
+//                //imagenPreviwLabel.setIcon(imagen2);
+//
+//                break;
+//            default :
+//                System.out.println("No se reconoce el valor");
+//
+//        }
+//    }
     private void updateViewerImage(ImageIcon newImage){
         imagePreviwLabel.setIcon(newImage);
         System.out.println("Resulucionde la imagen: "+newImage.getIconWidth()+"X - "+newImage.getIconHeight()+"Y" );
@@ -317,13 +317,13 @@ public class Scanner extends JFrame{
 
         leftClickPosition=false;
 
-        //Cargar imagenes de test
-        imagen2= new ImageIcon("C:\\Users\\angar\\IdeaProjects\\printer-GUI\\src\\main\\resources\\vlcsnap-2018-06-29-16h44m46s273.png");
-        imagen1= new ImageIcon("C:\\Users\\angar\\IdeaProjects\\printer-GUI\\src\\main\\resources\\Sin título-1.jpg");
-        imagen3= new ImageIcon("C:\\Users\\angar\\IdeaProjects\\printer-GUI\\src\\main\\resources\\hpscan001.png");
-
-        System.out.println("LoadImage>>>>>>>>>>>>>>>>>>>");
-        currentViewerImage=imagen3.getImage();
+//        //Cargar imagenes de test
+//        imagen2= new ImageIcon("C:\\Users\\angar\\IdeaProjects\\printer-GUI\\src\\main\\resources\\vlcsnap-2018-06-29-16h44m46s273.png");
+//        imagen1= new ImageIcon("C:\\Users\\angar\\IdeaProjects\\printer-GUI\\src\\main\\resources\\Sin título-1.jpg");
+//        imagen3= new ImageIcon("C:\\Users\\angar\\IdeaProjects\\printer-GUI\\src\\main\\resources\\hpscan001.png");
+//
+//        System.out.println("LoadImage>>>>>>>>>>>>>>>>>>>");
+//        currentViewerImage=imagen3.getImage();
 
         //Inicia panel de previsualizacion
         initPreviewPanel();
