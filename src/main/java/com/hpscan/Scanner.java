@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Scanner extends JFrame{
+public class Scanner extends JFrame {
     private JPanel root;
     private JButton scanButton;
     private JButton previwButton;
@@ -33,9 +33,9 @@ public class Scanner extends JFrame{
     private JEditorPane editorPane1;
 
     //Imagenes
-    ImageIcon imagen2;
-    ImageIcon imagen1;
-    ImageIcon imagen3;
+//    ImageIcon imagen2;
+//    ImageIcon imagen1;
+//    ImageIcon imagen3;
     ImageIcon previewImageIcon;
 
     //Current Preview
@@ -46,7 +46,7 @@ public class Scanner extends JFrame{
     private Image currentViewerImage;
     private Point initialSelectionPoint;
     private Point finalSelectionPoint;
-    private  Boolean leftClickPosition = false;
+    private Boolean leftClickPosition = false;
     JLabel selector;
 
     //Save scan
@@ -55,14 +55,12 @@ public class Scanner extends JFrame{
     private String fileName;
 
 
-
-
     public Scanner() {
         setTitle("Scanner");
         add(root);
         imagePreviwLabel = new JLabel();
         previewLayeredPanel = new JLayeredPane();
-        panelPreview.setLayout(new BoxLayout(panelPreview,BoxLayout.Y_AXIS));
+        panelPreview.setLayout(new BoxLayout(panelPreview, BoxLayout.Y_AXIS));
         //Crea el tamño de la ventana en funcion de el tamaño de la pantalla
         normalizeWindowsSize();
         setDefaultValues();
@@ -75,7 +73,7 @@ public class Scanner extends JFrame{
                 //imagenPreviwLabel = new JLabel(new ImageIcon("C:\\Users\\angar\\IdeaProjects\\printer-GUI\\src\\main\\resources\\vlcsnap-2018-06-29-16h44m46s273.png"));
                 //updateViewerImage(1);
 
-                runScan(Paths.get(texBoxFolderPath.getText()), texBoxFileName.getText(),Integer.parseInt(comboBoxResolution.getSelectedItem().toString()),comboBoxColorSpace.getSelectedItem().toString());
+                runScan(Paths.get(texBoxFolderPath.getText()), texBoxFileName.getText(), Integer.parseInt(comboBoxResolution.getSelectedItem().toString()), comboBoxColorSpace.getSelectedItem().toString());
 
 
             }
@@ -86,26 +84,26 @@ public class Scanner extends JFrame{
             @Override
             public void componentResized(ComponentEvent e) {
                 super.componentResized(e);
-                windowsSizeTexBox.setText(root.getWidth()+" X,   "+ root.getHeight()+" Y");
+                windowsSizeTexBox.setText(root.getWidth() + " X,   " + root.getHeight() + " Y");
                 updateViewerSize();
 
             }
         });
 
 
-
         imagePreviwLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
-                initialSelectionPoint=e.getPoint();
-                System.out.println("D: "+e.getPoint().toString());
+                initialSelectionPoint = e.getPoint();
+                System.out.println("D: " + e.getPoint().toString());
             }
+
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                finalSelectionPoint=e.getPoint();
-                System.out.println("U: "+e.getPoint().toString());
+                finalSelectionPoint = e.getPoint();
+                System.out.println("U: " + e.getPoint().toString());
                 updateSelectedArea();
 
             }
@@ -113,71 +111,70 @@ public class Scanner extends JFrame{
         previwButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-               // paintRectangle();
+                // paintRectangle();
                 //get File path
 
-                String tmpFilename="scanner-"+ThreadLocalRandom.current().nextInt(1, 100)+".jpg";
+                String tmpFilename = "scanner-" + ThreadLocalRandom.current().nextInt(1, 100) + ".jpg";
                 Path previewImagePath = Path.of(System.getProperty("java.io.tmpdir"));
                 //Lock graphical interface
 
                 //Scan
-                runScan(previewImagePath,tmpFilename,75,"color");
+                runScan(previewImagePath, tmpFilename, 75, "color");
 
                 //Wait untilFinish
 
                 //Remplace image
-                System.out.println(previewImagePath.toString()+"/"+tmpFilename);
-                previewImageIcon = new ImageIcon(Path.of(previewImagePath.toString(),tmpFilename).toString());
-                System.out.println(">>>>>>"+previewImageIcon.getIconHeight());
+                System.out.println(previewImagePath.toString() + "/" + tmpFilename);
+                previewImageIcon = new ImageIcon(Path.of(previewImagePath.toString(), tmpFilename).toString());
+                System.out.println(">>>>>>" + previewImageIcon.getIconHeight());
                 setViewerImage(previewImageIcon.getImage());
                 //updatePreviewPanelSize();
                 updateViewerSize();
 
                 //Remove prevew Image
-                File temporalFile = new File(Path.of(previewImagePath.toString(),tmpFilename).toString());
+                File temporalFile = new File(Path.of(previewImagePath.toString(), tmpFilename).toString());
                 temporalFile.delete();
             }
         });
     }
 
 
-    private Boolean changeMousePosition(){
+//    private Boolean changeMousePosition() {
+//
+//        synchronized (leftClickPosition) {
+//            if (leftClickPosition) {
+//                leftClickPosition = false;
+//                return false;
+//            } else {
+//                leftClickPosition = true;
+//                return true;
+//            }
+//        }
+//    }
+//
+//
+//    private void updateViewerImage(int imageNumber) {
+//        switch (imageNumber) {
+//            case 1:
+//                setViewerImage(imagen1.getImage());
+//                //currentViewerImage=imagen1.getImage();
+//                updateViewerSize();
+//                //imagenPreviwLabel.setIcon(imagen1);
+//                break;
+//            case 2:
+//                setViewerImage(imagen2.getImage());
+//                //currentViewerImage=imagen2.getImage();
+//                updateViewerSize();
+//                //imagenPreviwLabel.setIcon(imagen2);
+//
+//                break;
+//            default:
+//                System.out.println("No se reconoce el valor");
+//
+//        }
+//    }
 
-        synchronized(leftClickPosition){
-            if(leftClickPosition){
-                leftClickPosition=false;
-                return false;
-            }else{
-                leftClickPosition=true;
-                return true;
-            }
-        }
-    }
 
-
-
-
-
-    private void updateViewerImage(int imageNumber){
-        switch(imageNumber){
-            case 1:
-                setViewerImage(imagen1.getImage());
-                //currentViewerImage=imagen1.getImage();
-                updateViewerSize();
-                //imagenPreviwLabel.setIcon(imagen1);
-                break;
-            case 2:
-                setViewerImage(imagen2.getImage());
-                //currentViewerImage=imagen2.getImage();
-                updateViewerSize();
-                //imagenPreviwLabel.setIcon(imagen2);
-
-                break;
-            default :
-                System.out.println("No se reconoce el valor");
-
-        }
-    }
     private void updateViewerImage(ImageIcon newImage){
         imagePreviwLabel.setIcon(newImage);
         System.out.println("Resulucionde la imagen: "+newImage.getIconWidth()+"X - "+newImage.getIconHeight()+"Y" );
@@ -347,11 +344,11 @@ public class Scanner extends JFrame{
 
         //Cargar imagenes de test
         //imagen2= new ImageIcon("C:\\Users\\angar\\IdeaProjects\\printer-GUI\\src\\main\\resources\\vlcsnap-2018-06-29-16h44m46s273.png");
-        imagen1= new ImageIcon("/home/anto/IdeaProjects/printer-GUI/src/main/resources/Sin título-1.jpg");
-        imagen3= new ImageIcon("/home/anto/IdeaProjects/printer-GUI/src/main/resources/hpscan001.png");
-
-        System.out.println("LoadImage>>>>>>>>>>>>>>>>>>>");
-        currentViewerImage=imagen3.getImage();
+//        imagen1= new ImageIcon("/home/anto/IdeaProjects/printer-GUI/src/main/resources/Sin título-1.jpg");
+//        imagen3= new ImageIcon("/home/anto/IdeaProjects/printer-GUI/src/main/resources/hpscan001.png");
+//
+//        System.out.println("LoadImage>>>>>>>>>>>>>>>>>>>");
+//        currentViewerImage=imagen3.getImage();
 
         //Inicia panel de previsualizacion
         initPreviewPanel();
