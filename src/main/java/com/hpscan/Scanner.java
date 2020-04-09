@@ -30,12 +30,15 @@ public class Scanner extends JFrame {
     private JPanel PanelDerecho;
     private JPanel panelHUD;
     private JPanel panelPreview;
+    private JComboBox comboBox1;
+    private JTextArea consoleLog;
+    private JProgressBar progressBarScan;
     private JEditorPane editorPane1;
 
     //Imagenes
 //    ImageIcon imagen2;
 //    ImageIcon imagen1;
-//    ImageIcon imagen3;
+    ImageIcon defaultImage;
     ImageIcon previewImageIcon;
 
     //Current Preview
@@ -72,8 +75,13 @@ public class Scanner extends JFrame {
                 //JOptionPane.showMessageDialog(panel1, "Hola: "+screenSize.getHeight()+" - "+screenSize.getWidth());
                 //imagenPreviwLabel = new JLabel(new ImageIcon("C:\\Users\\angar\\IdeaProjects\\printer-GUI\\src\\main\\resources\\vlcsnap-2018-06-29-16h44m46s273.png"));
                 //updateViewerImage(1);
+                new Thread(new Runnable() {
+                    public void run() {
+                        runScan(Paths.get(texBoxFolderPath.getText()), texBoxFileName.getText(), Integer.parseInt(comboBoxResolution.getSelectedItem().toString()), comboBoxColorSpace.getSelectedItem().toString());
 
-                runScan(Paths.get(texBoxFolderPath.getText()), texBoxFileName.getText(), Integer.parseInt(comboBoxResolution.getSelectedItem().toString()), comboBoxColorSpace.getSelectedItem().toString());
+                    }
+                }).start();
+                //runScan(Paths.get(texBoxFolderPath.getText()), texBoxFileName.getText(), Integer.parseInt(comboBoxResolution.getSelectedItem().toString()), comboBoxColorSpace.getSelectedItem().toString());
 
 
             }
@@ -119,21 +127,28 @@ public class Scanner extends JFrame {
                 //Lock graphical interface
 
                 //Scan
-                runScan(previewImagePath, tmpFilename, 75, "color");
+                new Thread(new Runnable() {
+                    public void run() {
+                        runScan(previewImagePath, tmpFilename, 75, "color");
+                        // runScan(previewImagePath, tmpFilename, 75, "color");
 
-                //Wait untilFinish
+                        //Wait untilFinish
 
-                //Remplace image
-                System.out.println(previewImagePath.toString() + "/" + tmpFilename);
-                previewImageIcon = new ImageIcon(Path.of(previewImagePath.toString(), tmpFilename).toString());
-                System.out.println(">>>>>>" + previewImageIcon.getIconHeight());
-                setViewerImage(previewImageIcon.getImage());
-                //updatePreviewPanelSize();
-                updateViewerSize();
+                        //Remplace image
+                        System.out.println(previewImagePath.toString() + "/" + tmpFilename);
+                        previewImageIcon = new ImageIcon(Path.of(previewImagePath.toString(), tmpFilename).toString());
+                        System.out.println(">>>>>>" + previewImageIcon.getIconHeight());
+                        setViewerImage(previewImageIcon.getImage());
+                        //updatePreviewPanelSize();
+                        updateViewerSize();
 
-                //Remove prevew Image
-                File temporalFile = new File(Path.of(previewImagePath.toString(), tmpFilename).toString());
-                temporalFile.delete();
+                        //Remove prevew Image
+                        File temporalFile = new File(Path.of(previewImagePath.toString(), tmpFilename).toString());
+                        temporalFile.delete();
+
+                    }
+
+                }).start();
             }
         });
     }
@@ -189,7 +204,8 @@ public class Scanner extends JFrame {
        // JLayeredPane previewLayeredPanel = new JLayeredPane();
         previewLayeredPanel.setBackground(Color.RED);
         //previewLayeredPanel.setBorder(BorderFactory.createTitledBorder("TEST-ELIMINAR AL TERMINAR"));
-        previewLayeredPanel.setBackground(new Color(132,137,141));
+        //previewLayeredPanel.setBackground(new Color(132,137,141));
+        //previewLayeredPanel.setBackground(new Color(0,0,0));
         panelPreview.setBackground(new Color(132,137,141));
         //imagePreviwLabel = new JLabel();
 
@@ -199,11 +215,13 @@ public class Scanner extends JFrame {
         selector.setVisible(true);
         //selector.setText("dfsdsfdsfdsfdsfds");
         selector.setBounds(0, 0, 100, 100);
-        selector.setSize(400,500);
+        selector.setSize(0,0);
         Border selectorBorder = BorderFactory.createLineBorder(Color.BLUE, 2);
         selector.setBorder(selectorBorder);
 
         imagePreviwLabel.setBounds(100,200,100,200);
+        //imagePreviwLabel.setBackground(Color.WHITE);
+        //imagePreviwLabel.setSize(100,200);
         //adding buttons on panel
         previewLayeredPanel.add(selector, 0);
         previewLayeredPanel.add(imagePreviwLabel, 1);
@@ -345,10 +363,10 @@ public class Scanner extends JFrame {
         //Cargar imagenes de test
         //imagen2= new ImageIcon("C:\\Users\\angar\\IdeaProjects\\printer-GUI\\src\\main\\resources\\vlcsnap-2018-06-29-16h44m46s273.png");
 //        imagen1= new ImageIcon("/home/anto/IdeaProjects/printer-GUI/src/main/resources/Sin título-1.jpg");
-//        imagen3= new ImageIcon("/home/anto/IdeaProjects/printer-GUI/src/main/resources/hpscan001.png");
+        defaultImage= new ImageIcon("/home/anto/IdeaProjects/printer-GUI/src/main/resources/hpscan001.png");
 //
 //        System.out.println("LoadImage>>>>>>>>>>>>>>>>>>>");
-//        currentViewerImage=imagen3.getImage();
+        currentViewerImage=defaultImage.getImage();
 
         //Inicia panel de previsualizacion
         initPreviewPanel();
@@ -392,31 +410,57 @@ public class Scanner extends JFrame {
 
     ////////////////////////////LANZAR COMANDOS DE SISTEMA////////////////////////////
     public void runScan(Path filePath, String fileName, int dpiResolution, String colorSpace) {
+        System.out.println(Thread.currentThread().getName());
 
-        String destinationPath=Path.of(filePath.toString(),fileName).toString();
-        String scanBashCommand="hp-scan "+"--mode="+colorSpace+" --resolution="+dpiResolution+" -f "+destinationPath;
-        String result=null;
 
-        try {
-            System.out.println("Se va a lanzar el comando: "+scanBashCommand);
-            Process process = Runtime.getRuntime().exec(scanBashCommand);
+                String destinationPath=Path.of(filePath.toString(),fileName).toString();
+                String scanBashCommand="hp-scan "+"--mode="+colorSpace+" --resolution="+dpiResolution+" -f "+destinationPath;
+                String result=null;
 
-            BufferedReader in =
-                    new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                System.out.println(inputLine);
-                result += inputLine;
-            }
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+                try {
+                    System.out.println("Se va a lanzar el comando: "+scanBashCommand);
+                    Process process = Runtime.getRuntime().exec(scanBashCommand);
 
-        //ProcessBuilder builder = new ProcessBuilder();
-        //builder.command(comandoDeEscaneo);
-        //System.out.println(comandoDeEscaneo);
+                    BufferedReader in =
+                            new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    String inputLine;
+
+
+                    char progressCharArray[]= new char[5];
+                    int starCount =0;
+                    int theCharNum = in.read();
+                    while(theCharNum != -1) {
+                        char theChar = (char) theCharNum;
+                        //System.out.print(theChar);
+                        //System.out.print(theChar);
+                        if(Character.compare(theChar,(char)']')==0){
+                            in.read(progressCharArray,0,5);
+                            progressBarScan.setValue(50);
+                            String progresString = new String(progressCharArray);
+                            progresString = progresString.replace(" ","");
+                            progresString = progresString.replace("%","");
+                            //System.out.print(progresString+"-");
+                            progressBarScan.setValue(Integer.parseInt(progresString));
+                        }
+                        theCharNum = in.read();
+
+                    }
+                    System.out.println("Nuemero de estrellas contadas: "+starCount);
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+
+        //procesoBashScan.run();
+        System.out.println("Se ha terminado de escanear");
     }
 
 
+
+
 }
+
+
