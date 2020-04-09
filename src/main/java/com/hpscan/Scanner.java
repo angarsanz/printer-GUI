@@ -26,7 +26,7 @@ public class Scanner extends JFrame {
     private JLabel tituloAjustesEscaneo;
     private JTextField texBoxFileName;
     private JTextField texBoxFolderPath;
-    private JTextField prevewMousePossitionBox;
+    private JTextField selectedAreaBox;
     private JPanel PanelDerecho;
     private JPanel panelHUD;
     private JPanel panelPreview;
@@ -51,6 +51,8 @@ public class Scanner extends JFrame {
     private Point finalSelectionPoint;
     private Boolean leftClickPosition = false;
     JLabel selector;
+    private Integer lastWindowsSizeHeight;
+    private Integer lastWindowsSizeWith;
 
     //Save scan
     private Path outputFolderScanPath;
@@ -92,9 +94,11 @@ public class Scanner extends JFrame {
             @Override
             public void componentResized(ComponentEvent e) {
                 super.componentResized(e);
+                
                 windowsSizeTexBox.setText(root.getWidth() + " X,   " + root.getHeight() + " Y");
                 updateViewerSize();
-
+                //Almacena el nuevo valor de la ventana
+                setWindowsSize(root.getWidth(),root.getHeight());
             }
         });
 
@@ -154,40 +158,7 @@ public class Scanner extends JFrame {
     }
 
 
-//    private Boolean changeMousePosition() {
-//
-//        synchronized (leftClickPosition) {
-//            if (leftClickPosition) {
-//                leftClickPosition = false;
-//                return false;
-//            } else {
-//                leftClickPosition = true;
-//                return true;
-//            }
-//        }
-//    }
-//
-//
-//    private void updateViewerImage(int imageNumber) {
-//        switch (imageNumber) {
-//            case 1:
-//                setViewerImage(imagen1.getImage());
-//                //currentViewerImage=imagen1.getImage();
-//                updateViewerSize();
-//                //imagenPreviwLabel.setIcon(imagen1);
-//                break;
-//            case 2:
-//                setViewerImage(imagen2.getImage());
-//                //currentViewerImage=imagen2.getImage();
-//                updateViewerSize();
-//                //imagenPreviwLabel.setIcon(imagen2);
-//
-//                break;
-//            default:
-//                System.out.println("No se reconoce el valor");
-//
-//        }
-//    }
+
 
 
     private void updateViewerImage(ImageIcon newImage){
@@ -196,6 +167,25 @@ public class Scanner extends JFrame {
 
     }
 
+    private void setWindowsSize(int newWindowsSizeWith, int newWindowsSizeHeight){
+        synchronized(lastWindowsSizeHeight){
+            lastWindowsSizeHeight =newWindowsSizeHeight;
+            
+        }
+        synchronized (lastWindowsSizeWith){
+            lastWindowsSizeWith=newWindowsSizeWith;
+        }
+    }
+    private Integer getLastWindowsWith(){
+        return lastWindowsSizeWith;
+    }
+
+    private Integer getLastWindowsHeight(){
+        return lastWindowsSizeHeight;
+    }
+    
+    
+    
     /////////////////INICIO PREVIEW//////////////
     private void initPreviewPanel(){
 
@@ -232,12 +222,11 @@ public class Scanner extends JFrame {
         //previewLayeredPanel.setBounds(0,0,previewLayeredPanel.getWidth(),previewLayeredPanel.getHeight());
     }
     private void updatePreviewPanelSize(){
-        //selector.setBounds(0, 0, panelPreview.getWidth(), 100);
+
         imagePreviwLabel.setBounds(0,0,panelPreview.getWidth(),panelPreview.getHeight());
         selector.setBounds(0,0,panelPreview.getWidth(),panelPreview.getHeight());
         panelPreview.validate();
-        //previewLayeredPanel.add(imagePreviwLabel, 0);
-        //System.out.println(imagePreviwLabel.getIcon().getIconHeight());
+
 
     }
 
@@ -248,10 +237,15 @@ public class Scanner extends JFrame {
         //private Point initialSelectionPoint;
         //private Point finalSelectionPoint;
         System.out.println(">>>>>>>"+(int) initialSelectionPoint.getX());
-        selector.setBounds((int) initialSelectionPoint.getX(), (int) initialSelectionPoint.getY(), (int) (finalSelectionPoint.getX()-initialSelectionPoint.getX()), (int) (finalSelectionPoint.getY()-initialSelectionPoint.getY()));
-
+        selector.setBounds((int) initialSelectionPoint.getX(),
+                (int) initialSelectionPoint.getY(),
+                (int) (finalSelectionPoint.getX()-initialSelectionPoint.getX()),
+                (int) (finalSelectionPoint.getY()-initialSelectionPoint.getY()));
+        //Mostrar panel de informacion
+        selectedAreaBox.setText(initialSelectionPoint.toString()+" "+finalSelectionPoint.toString());
         panelPreview.validate();
     }
+
 
     private void updateViewerSize(){
 
@@ -264,13 +258,8 @@ public class Scanner extends JFrame {
             currentViewerImage.getWidth(null);
             currentViewerImage.getHeight(null);
 
-            //int availableWith = root.getWidth() - configurationPanel.getWidth();
-            //int availableWith = previewLayeredPanel.getWidth();
+
             int availableWith = panelPreview.getWidth();
-            //int availableHeight = root.getHeight() -
-            //int availableWith = imagenPreviwLabel.getWidth();
-            //int availableHeight = panelPreview.getHeight();
-            //int availableHeight = previewLayeredPanel.getHeight();
             int availableHeight = root.getHeight()-windowsSizeTexBox.getHeight()-panelHUD.getHeight()-10;
 
 
@@ -286,9 +275,28 @@ public class Scanner extends JFrame {
                 updateViewerImage(new ImageIcon(getScaledImage(scaledViewerImage.getImage(), proporcionH)));
             }
 
-            //updateViewerImage(new ImageIcon(getScaledImage(scaledViewerImage.getImage(), proporcionW)));
-            //imagen3.setImage(getScaledImage(scaledViewerImage.getImage(), proporcion));
-            //imagenPreviwLabel.setIcon(imagen3);
+
+            //Update selector Size
+            if(initialSelectionPoint!=null && finalSelectionPoint!=null) {
+
+                float proporcionSelectorW = (float) ((float) availableWith / (float) (-initialSelectionPoint.getX()+finalSelectionPoint.getX()));
+                float proporcionSelectorH = (float) ((float) availableHeight / (float) (-initialSelectionPoint.getY()+finalSelectionPoint.getY()));
+
+
+                System.out.println("Se va a reescalar el selector:"+"\n"+
+                        "inicial: "+initialSelectionPoint+"\n"+
+                        "final: "+finalSelectionPoint+"\n"+
+                        "Facto de compresonX: "+proporcionSelectorW+"\n"+
+                        "Facto de compresonH: "+proporcionSelectorH+"\n"
+                        );
+
+
+
+                initialSelectionPoint.setLocation(100, 100);
+                finalSelectionPoint.setLocation(200, 200);
+                updateSelectedArea();
+            }
+
 
 
         }else{
