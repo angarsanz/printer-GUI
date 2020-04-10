@@ -260,12 +260,20 @@ public class Scanner extends JFrame {
         float imagePreviewWith=(float)imagePreviwLabel.getIcon().getIconWidth();
         float imagePreviewHeight=(float)imagePreviwLabel.getIcon().getIconHeight();
 
+        //Calculo offset de la imagen respecto al cuadro de previsualizacion
+        int offsetHeight = (int) (((float)PanelDerecho.getHeight() - imagePreviewHeight) / 2.0f);
+        int offsetWith = (int) (((float)PanelDerecho.getWidth() - imagePreviewWith) / 2.0f);
+
         float sectorProprotionInitialX=((float)initialSelectionPoint.getX()/imagePreviewWith)*100.0f;
-        float sectorProprotionInitialY=((float)initialSelectionPoint.getY()/imagePreviewHeight)*100.0f;
+        float sectorProprotionInitialY=(((float)initialSelectionPoint.getY()-offsetHeight)/imagePreviewHeight)*100.0f;
         float sectorProprotionFinalX=((float)finalSelectionPoint.getX()/imagePreviewWith)*100.0f;
-        float sectorProprotionFinalY=((float)finalSelectionPoint.getY()/imagePreviewHeight)*100.0f;
+        float sectorProprotionFinalY=(((float)finalSelectionPoint.getY()-offsetHeight)/imagePreviewHeight)*100.0f;
         //selectedAreaBox.setText(sectorProprotionInitialX+"-"+sectorProprotionInitialY+" /-/ "+sectorProprotionFinalX+"-"+sectorProprotionFinalY);
 
+
+
+
+        //System.out.println("PD:"+PanelDerecho.getHeight()+"  /  IPL"+imagePreviwLabel.getHeight()+"  ////   OffSet: "+offsetHeight);
         //Se almacena el valor normalizado en un puntos (si fuese inpreciso se recomienda crear una clase que extienda puento y permmita guardar floats en vez de enteros)
         initialSelectionPointNormalized = new Point((int)sectorProprotionInitialX,(int)sectorProprotionInitialY);
         finalSelectionPointNormalized = new Point((int)sectorProprotionFinalX,(int)sectorProprotionFinalY);
@@ -305,31 +313,21 @@ public class Scanner extends JFrame {
 
             //Update selector Size
             if (initialSelectionPoint != null && finalSelectionPoint != null) {
-/*
-                float proporcionSelectorW = (float) ((float) availableWith / (float) (-initialSelectionPoint.getX() + finalSelectionPoint.getX()));
-                float proporcionSelectorH = (float) ((float) availableHeight / (float) (-initialSelectionPoint.getY() + finalSelectionPoint.getY()));
 
 
-                System.out.println("Se va a reescalar el selector:" + "\n" +
-                        "inicial: " + initialSelectionPoint + "\n" +
-                        "final: " + finalSelectionPoint + "\n" +
-                        "Facto de compresonX: " + proporcionSelectorW + "\n" +
-                        "Facto de compresonH: " + proporcionSelectorH + "\n"
-                );
-
-
-                initialSelectionPoint.setLocation(100, 100);
-                finalSelectionPoint.setLocation(200, 200);
-
-
- */
 
                 float imagePreviewWith=(float)imagePreviwLabel.getIcon().getIconWidth();
                 float imagePreviewHeight=(float)imagePreviwLabel.getIcon().getIconHeight();
+
+                //Calculo offset de la imagen respecto al cuadro de previsualizacion
+                int offsetHeight = (int) (((float)PanelDerecho.getHeight() - imagePreviewHeight) / 2.0f);
+                int offsetWith = (int) (((float)PanelDerecho.getWidth() - imagePreviewWith) / 2.0f);
+
+
                 initialSelectionPoint.setLocation(imagePreviewWith*((float)initialSelectionPointNormalized.getX())/100.0f,
-                        imagePreviewHeight*((float)initialSelectionPointNormalized.getY())/100.0f);
+                        (imagePreviewHeight*((float)initialSelectionPointNormalized.getY())/100.0f)+offsetHeight);
                 finalSelectionPoint.setLocation(imagePreviewWith*((float)finalSelectionPointNormalized.getX())/100.0f,
-                        imagePreviewHeight*((float)finalSelectionPointNormalized.getY())/100.0f);
+                        (imagePreviewHeight*((float)finalSelectionPointNormalized.getY())/100.0f)+offsetHeight);
 
 
                 updateSelectedArea();
