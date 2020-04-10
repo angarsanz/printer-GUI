@@ -2,6 +2,7 @@ package com.hpscan;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -49,10 +50,12 @@ public class Scanner extends JFrame {
     private Image currentViewerImage;
     private Point initialSelectionPoint;
     private Point finalSelectionPoint;
+    private Point initialSelectionPointNormalized;
+    private Point finalSelectionPointNormalized;
     private Boolean leftClickPosition = false;
     JLabel selector;
-    private Integer lastWindowsSizeHeight;
-    private Integer lastWindowsSizeWith;
+   // private Integer lastWindowsSizeHeight = 0;
+   // private Integer lastWindowsSizeWith = 0;
 
     //Save scan
     private Path outputFolderScanPath;
@@ -61,8 +64,13 @@ public class Scanner extends JFrame {
 
 
     public Scanner() {
+        System.out.println("VR");
+        //root = new JPanel();
         setTitle("Scanner");
-        add(root);
+        if (root == null) {
+            System.out.println("Falta algo en root");
+        }
+        this.add(root);
         imagePreviwLabel = new JLabel();
         previewLayeredPanel = new JLayeredPane();
         panelPreview.setLayout(new BoxLayout(panelPreview, BoxLayout.Y_AXIS));
@@ -94,11 +102,11 @@ public class Scanner extends JFrame {
             @Override
             public void componentResized(ComponentEvent e) {
                 super.componentResized(e);
-                
+
                 windowsSizeTexBox.setText(root.getWidth() + " X,   " + root.getHeight() + " Y");
                 updateViewerSize();
                 //Almacena el nuevo valor de la ventana
-                setWindowsSize(root.getWidth(),root.getHeight());
+                //setWindowsSize(root.getWidth(), root.getHeight());
             }
         });
 
@@ -157,46 +165,50 @@ public class Scanner extends JFrame {
         });
     }
 
+//    public static void main(String[] args) {
+//        JFrame frame = new JFrame("Scanner");
+//        frame.setContentPane(new Scanner().root);
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        frame.pack();
+//        frame.setVisible(true);
+//    }
 
 
-
-
-    private void updateViewerImage(ImageIcon newImage){
+    private void updateViewerImage(ImageIcon newImage) {
         imagePreviwLabel.setIcon(newImage);
-        System.out.println("Resulucionde la imagen: "+newImage.getIconWidth()+"X - "+newImage.getIconHeight()+"Y" );
+        System.out.println("Resulucionde la imagen: " + newImage.getIconWidth() + "X - " + newImage.getIconHeight() + "Y");
 
     }
 
-    private void setWindowsSize(int newWindowsSizeWith, int newWindowsSizeHeight){
-        synchronized(lastWindowsSizeHeight){
-            lastWindowsSizeHeight =newWindowsSizeHeight;
-            
-        }
-        synchronized (lastWindowsSizeWith){
-            lastWindowsSizeWith=newWindowsSizeWith;
-        }
-    }
-    private Integer getLastWindowsWith(){
-        return lastWindowsSizeWith;
-    }
+//    private void setWindowsSize(int newWindowsSizeWith, int newWindowsSizeHeight) {
+//        synchronized (lastWindowsSizeHeight) {
+//            lastWindowsSizeHeight = newWindowsSizeHeight;
+//
+//        }
+//        synchronized (lastWindowsSizeWith) {
+//            lastWindowsSizeWith = newWindowsSizeWith;
+//        }
+//    }
+//
+//    private Integer getLastWindowsWith() {
+//        return lastWindowsSizeWith;
+//    }
+//
+//    private Integer getLastWindowsHeight() {
+//        return lastWindowsSizeHeight;
+//    }
 
-    private Integer getLastWindowsHeight(){
-        return lastWindowsSizeHeight;
-    }
-    
-    
-    
+
     /////////////////INICIO PREVIEW//////////////
-    private void initPreviewPanel(){
+    private void initPreviewPanel() {
 
 
-
-       // JLayeredPane previewLayeredPanel = new JLayeredPane();
+        // JLayeredPane previewLayeredPanel = new JLayeredPane();
         previewLayeredPanel.setBackground(Color.RED);
         //previewLayeredPanel.setBorder(BorderFactory.createTitledBorder("TEST-ELIMINAR AL TERMINAR"));
         //previewLayeredPanel.setBackground(new Color(132,137,141));
         //previewLayeredPanel.setBackground(new Color(0,0,0));
-        panelPreview.setBackground(new Color(132,137,141));
+        panelPreview.setBackground(new Color(132, 137, 141));
         //imagePreviwLabel = new JLabel();
 
 
@@ -205,11 +217,11 @@ public class Scanner extends JFrame {
         selector.setVisible(true);
         //selector.setText("dfsdsfdsfdsfdsfds");
         selector.setBounds(0, 0, 100, 100);
-        selector.setSize(0,0);
+        selector.setSize(0, 0);
         Border selectorBorder = BorderFactory.createLineBorder(Color.BLUE, 2);
         selector.setBorder(selectorBorder);
 
-        imagePreviwLabel.setBounds(100,200,100,200);
+        imagePreviwLabel.setBounds(100, 200, 100, 200);
         //imagePreviwLabel.setBackground(Color.WHITE);
         //imagePreviwLabel.setSize(100,200);
         //adding buttons on panel
@@ -221,10 +233,11 @@ public class Scanner extends JFrame {
         panelPreview.validate();
         //previewLayeredPanel.setBounds(0,0,previewLayeredPanel.getWidth(),previewLayeredPanel.getHeight());
     }
-    private void updatePreviewPanelSize(){
 
-        imagePreviwLabel.setBounds(0,0,panelPreview.getWidth(),panelPreview.getHeight());
-        selector.setBounds(0,0,panelPreview.getWidth(),panelPreview.getHeight());
+    private void updatePreviewPanelSize() {
+
+        imagePreviwLabel.setBounds(0, 0, panelPreview.getWidth(), panelPreview.getHeight());
+        selector.setBounds(0, 0, panelPreview.getWidth(), panelPreview.getHeight());
         panelPreview.validate();
 
 
@@ -232,24 +245,38 @@ public class Scanner extends JFrame {
 
     /////////////////FINAL PREVIEW//////////////////
 
-    private void updateSelectedArea(){
+    private void updateSelectedArea() {
 
         //private Point initialSelectionPoint;
         //private Point finalSelectionPoint;
-        System.out.println(">>>>>>>"+(int) initialSelectionPoint.getX());
+        System.out.println(">>>>>>>" + (int) initialSelectionPoint.getX());
         selector.setBounds((int) initialSelectionPoint.getX(),
                 (int) initialSelectionPoint.getY(),
-                (int) (finalSelectionPoint.getX()-initialSelectionPoint.getX()),
-                (int) (finalSelectionPoint.getY()-initialSelectionPoint.getY()));
+                (int) (finalSelectionPoint.getX() - initialSelectionPoint.getX()),
+                (int) (finalSelectionPoint.getY() - initialSelectionPoint.getY()));
         //Mostrar panel de informacion
-        selectedAreaBox.setText(initialSelectionPoint.toString()+" "+finalSelectionPoint.toString());
+        //selectedAreaBox.setText(initialSelectionPoint.toString() + " " + finalSelectionPoint.toString());
         panelPreview.validate();
+        float imagePreviewWith=(float)imagePreviwLabel.getIcon().getIconWidth();
+        float imagePreviewHeight=(float)imagePreviwLabel.getIcon().getIconHeight();
+
+        float sectorProprotionInitialX=((float)initialSelectionPoint.getX()/imagePreviewWith)*100.0f;
+        float sectorProprotionInitialY=((float)initialSelectionPoint.getY()/imagePreviewHeight)*100.0f;
+        float sectorProprotionFinalX=((float)finalSelectionPoint.getX()/imagePreviewWith)*100.0f;
+        float sectorProprotionFinalY=((float)finalSelectionPoint.getY()/imagePreviewHeight)*100.0f;
+        //selectedAreaBox.setText(sectorProprotionInitialX+"-"+sectorProprotionInitialY+" /-/ "+sectorProprotionFinalX+"-"+sectorProprotionFinalY);
+
+        //Se almacena el valor normalizado en un puntos (si fuese inpreciso se recomienda crear una clase que extienda puento y permmita guardar floats en vez de enteros)
+        initialSelectionPointNormalized = new Point((int)sectorProprotionInitialX,(int)sectorProprotionInitialY);
+        finalSelectionPointNormalized = new Point((int)sectorProprotionFinalX,(int)sectorProprotionFinalY);
+
+        selectedAreaBox.setText(initialSelectionPointNormalized.toString() + " " + finalSelectionPointNormalized.toString());
     }
 
 
-    private void updateViewerSize(){
+    private void updateViewerSize() {
 
-        if(currentViewerImage!=null) {
+        if (currentViewerImage != null) {
             updatePreviewPanelSize();
             //valores de la ventana
             int currentWindowWith = root.getWidth();
@@ -260,53 +287,64 @@ public class Scanner extends JFrame {
 
 
             int availableWith = panelPreview.getWidth();
-            int availableHeight = root.getHeight()-windowsSizeTexBox.getHeight()-panelHUD.getHeight()-10;
+            int availableHeight = root.getHeight() - windowsSizeTexBox.getHeight() - panelHUD.getHeight() - 10;
 
 
             float proporcionW = (float) ((float) availableWith / (float) currentViewerImage.getWidth(null));
             float proporcionH = (float) ((float) availableHeight / (float) currentViewerImage.getHeight(null));
-            System.out.println("La nueva proporcion es: "+proporcionW+"X - "+proporcionH+"Y"+ "****" +availableHeight);
+            System.out.println("La nueva proporcion es: " + proporcionW + "X - " + proporcionH + "Y" + "****" + availableHeight);
             //Actualzia el valor de la imagen
-            ImageIcon scaledViewerImage=new ImageIcon(currentViewerImage);
-            if(proporcionW<proporcionH){
+            ImageIcon scaledViewerImage = new ImageIcon(currentViewerImage);
+            if (proporcionW < proporcionH) {
 
                 updateViewerImage(new ImageIcon(getScaledImage(scaledViewerImage.getImage(), proporcionW)));
-            }else{
+            } else {
                 updateViewerImage(new ImageIcon(getScaledImage(scaledViewerImage.getImage(), proporcionH)));
             }
 
 
             //Update selector Size
-            if(initialSelectionPoint!=null && finalSelectionPoint!=null) {
+            if (initialSelectionPoint != null && finalSelectionPoint != null) {
+/*
+                float proporcionSelectorW = (float) ((float) availableWith / (float) (-initialSelectionPoint.getX() + finalSelectionPoint.getX()));
+                float proporcionSelectorH = (float) ((float) availableHeight / (float) (-initialSelectionPoint.getY() + finalSelectionPoint.getY()));
 
-                float proporcionSelectorW = (float) ((float) availableWith / (float) (-initialSelectionPoint.getX()+finalSelectionPoint.getX()));
-                float proporcionSelectorH = (float) ((float) availableHeight / (float) (-initialSelectionPoint.getY()+finalSelectionPoint.getY()));
 
-
-                System.out.println("Se va a reescalar el selector:"+"\n"+
-                        "inicial: "+initialSelectionPoint+"\n"+
-                        "final: "+finalSelectionPoint+"\n"+
-                        "Facto de compresonX: "+proporcionSelectorW+"\n"+
-                        "Facto de compresonH: "+proporcionSelectorH+"\n"
-                        );
-
+                System.out.println("Se va a reescalar el selector:" + "\n" +
+                        "inicial: " + initialSelectionPoint + "\n" +
+                        "final: " + finalSelectionPoint + "\n" +
+                        "Facto de compresonX: " + proporcionSelectorW + "\n" +
+                        "Facto de compresonH: " + proporcionSelectorH + "\n"
+                );
 
 
                 initialSelectionPoint.setLocation(100, 100);
                 finalSelectionPoint.setLocation(200, 200);
+
+
+ */
+
+                float imagePreviewWith=(float)imagePreviwLabel.getIcon().getIconWidth();
+                float imagePreviewHeight=(float)imagePreviwLabel.getIcon().getIconHeight();
+                initialSelectionPoint.setLocation(imagePreviewWith*((float)initialSelectionPointNormalized.getX())/100.0f,
+                        imagePreviewHeight*((float)initialSelectionPointNormalized.getY())/100.0f);
+                finalSelectionPoint.setLocation(imagePreviewWith*((float)finalSelectionPointNormalized.getX())/100.0f,
+                        imagePreviewHeight*((float)finalSelectionPointNormalized.getY())/100.0f);
+
+
                 updateSelectedArea();
             }
 
 
-
-        }else{
+        } else {
             //No se ha cargado la imagen por lo que se creara la vista
             System.out.println("Se incia el panel de administracion");
             initPreviewPanel();
 
         }
     }
-    private void normalizeWindowsSize(){
+
+    private void normalizeWindowsSize() {
 
         float proporcionHorizontal = 0.5f;
         float proporcionVertical = 0.5f;
@@ -315,14 +353,14 @@ public class Scanner extends JFrame {
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-        windowWith= (int )((float) screenSize.getWidth()*proporcionHorizontal);
-        windowHeight= (int )((float) screenSize.getHeight()*proporcionVertical);
+        windowWith = (int) ((float) screenSize.getWidth() * proporcionHorizontal);
+        windowHeight = (int) ((float) screenSize.getHeight() * proporcionVertical);
 
-        setSize(windowWith,windowHeight);
+        setSize(windowWith, windowHeight);
     }
 
 
-    private Image getScaledImage(Image srcImg, int w, int h){
+    private Image getScaledImage(Image srcImg, int w, int h) {
         BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = resizedImg.createGraphics();
 
@@ -332,12 +370,13 @@ public class Scanner extends JFrame {
 
         return resizedImg;
     }
-    private Image getScaledImage(Image srcImg, float scalingFactor){
+
+    private Image getScaledImage(Image srcImg, float scalingFactor) {
 
         int w = srcImg.getWidth(null);
         int h = srcImg.getHeight(null);
-        h*=scalingFactor;
-        w*=scalingFactor;
+        h *= scalingFactor;
+        w *= scalingFactor;
 
         BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = resizedImg.createGraphics();
@@ -350,31 +389,30 @@ public class Scanner extends JFrame {
     }
 
 
+    public void setViewerImage(Image newImage) {
+        synchronized (currentViewerImage) {
 
-    public void setViewerImage(Image newImage){
-        synchronized (currentViewerImage){
-
-            currentViewerImage=newImage;
+            currentViewerImage = newImage;
         }
 
     }
 
-    public void setDefaultValues(){
+    public void setDefaultValues() {
 
-        outputFolderScanPath =  Path.of(System.getProperty("user.home"),"Escritorio");
+        outputFolderScanPath = Path.of(System.getProperty("user.home"), "Escritorio");
 
         texBoxFolderPath.setText(outputFolderScanPath.toString());
         texBoxFileName.setText(defaultFileName);
 
-        leftClickPosition=false;
+        leftClickPosition = false;
 
         //Cargar imagenes de test
         //imagen2= new ImageIcon("C:\\Users\\angar\\IdeaProjects\\printer-GUI\\src\\main\\resources\\vlcsnap-2018-06-29-16h44m46s273.png");
 //        imagen1= new ImageIcon("/home/anto/IdeaProjects/printer-GUI/src/main/resources/Sin título-1.jpg");
-        defaultImage= new ImageIcon("/home/anto/IdeaProjects/printer-GUI/src/main/resources/hpscan001.png");
+        defaultImage = new ImageIcon("/home/anto/IdeaProjects/printer-GUI/src/main/resources/hpscan001.png");
 //
 //        System.out.println("LoadImage>>>>>>>>>>>>>>>>>>>");
-        currentViewerImage=defaultImage.getImage();
+        currentViewerImage = defaultImage.getImage();
 
         //Inicia panel de previsualizacion
         initPreviewPanel();
@@ -392,8 +430,9 @@ public class Scanner extends JFrame {
         String s = "message";
         int x = 45;
         int y = 45;
+
         public void paint(Graphics g) {
-            g.drawRect (10, 10, 200, 200);
+            g.drawRect(10, 10, 200, 200);
             g.setColor(Color.red);
             g.drawString(s, x, y);
         }
@@ -416,57 +455,55 @@ public class Scanner extends JFrame {
 
     }
 
+
     ////////////////////////////LANZAR COMANDOS DE SISTEMA////////////////////////////
     public void runScan(Path filePath, String fileName, int dpiResolution, String colorSpace) {
         System.out.println(Thread.currentThread().getName());
 
 
-                String destinationPath=Path.of(filePath.toString(),fileName).toString();
-                String scanBashCommand="hp-scan "+"--mode="+colorSpace+" --resolution="+dpiResolution+" -f "+destinationPath;
-                String result=null;
+        String destinationPath = Path.of(filePath.toString(), fileName).toString();
+        String scanBashCommand = "hp-scan " + "--mode=" + colorSpace + " --resolution=" + dpiResolution + " -f " + destinationPath;
+        String result = null;
 
-                try {
-                    System.out.println("Se va a lanzar el comando: "+scanBashCommand);
-                    Process process = Runtime.getRuntime().exec(scanBashCommand);
+        try {
+            System.out.println("Se va a lanzar el comando: " + scanBashCommand);
+            Process process = Runtime.getRuntime().exec(scanBashCommand);
 
-                    BufferedReader in =
-                            new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    String inputLine;
-
-
-                    char progressCharArray[]= new char[5];
-                    int starCount =0;
-                    int theCharNum = in.read();
-                    while(theCharNum != -1) {
-                        char theChar = (char) theCharNum;
-                        //System.out.print(theChar);
-                        //System.out.print(theChar);
-                        if(Character.compare(theChar,(char)']')==0){
-                            in.read(progressCharArray,0,5);
-                            progressBarScan.setValue(50);
-                            String progresString = new String(progressCharArray);
-                            progresString = progresString.replace(" ","");
-                            progresString = progresString.replace("%","");
-                            //System.out.print(progresString+"-");
-                            progressBarScan.setValue(Integer.parseInt(progresString));
-                        }
-                        theCharNum = in.read();
-
-                    }
-                    System.out.println("Nuemero de estrellas contadas: "+starCount);
+            BufferedReader in =
+                    new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String inputLine;
 
 
-                } catch (IOException e) {
-                    e.printStackTrace();
+            char progressCharArray[] = new char[5];
+            int starCount = 0;
+            int theCharNum = in.read();
+            while (theCharNum != -1) {
+                char theChar = (char) theCharNum;
+                //System.out.print(theChar);
+                //System.out.print(theChar);
+                if (Character.compare(theChar, (char) ']') == 0) {
+                    in.read(progressCharArray, 0, 5);
+                    progressBarScan.setValue(50);
+                    String progresString = new String(progressCharArray);
+                    progresString = progresString.replace(" ", "");
+                    progresString = progresString.replace("%", "");
+                    //System.out.print(progresString+"-");
+                    progressBarScan.setValue(Integer.parseInt(progresString));
                 }
+                theCharNum = in.read();
 
+            }
+            System.out.println("Nuemero de estrellas contadas: " + starCount);
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
         //procesoBashScan.run();
         System.out.println("Se ha terminado de escanear");
     }
-
-
 
 
 }

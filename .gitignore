@@ -1,4 +1,6 @@
 .idea/
 target
 printer-GUI.iml
-.gitignore
+.gradle/
+gradle
+out/
