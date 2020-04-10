@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.ThreadLocalRandom;
+import com.hpscan.normalizedPoint;
 
 public class Scanner extends JFrame {
     private JPanel root;
@@ -50,8 +51,8 @@ public class Scanner extends JFrame {
     private Image currentViewerImage;
     private Point initialSelectionPoint;
     private Point finalSelectionPoint;
-    private Point initialSelectionPointNormalized;
-    private Point finalSelectionPointNormalized;
+    private normalizedPoint initialSelectionPointNormalized;
+    private normalizedPoint finalSelectionPointNormalized;
     private Boolean leftClickPosition = false;
     JLabel selector;
    // private Integer lastWindowsSizeHeight = 0;
@@ -260,9 +261,9 @@ public class Scanner extends JFrame {
         float imagePreviewWith=(float)imagePreviwLabel.getIcon().getIconWidth();
         float imagePreviewHeight=(float)imagePreviwLabel.getIcon().getIconHeight();
 
-        //Calculo offset de la imagen respecto al cuadro de previsualizacion
-        int offsetHeight = (int) (((float)PanelDerecho.getHeight() - imagePreviewHeight) / 2.0f);
-        int offsetWith = (int) (((float)PanelDerecho.getWidth() - imagePreviewWith) / 2.0f);
+        //Calculo offset de la imagen respecto al cuadro de previsualizacion previewLayeredPanel
+        int offsetHeight = (int) (((float)previewLayeredPanel.getHeight() - imagePreviewHeight) / 2.0f);
+        int offsetWith = (int) (((float)previewLayeredPanel.getWidth() - imagePreviewWith) / 2.0f);
 
         float sectorProprotionInitialX=((float)initialSelectionPoint.getX()/imagePreviewWith)*100.0f;
         float sectorProprotionInitialY=(((float)initialSelectionPoint.getY()-offsetHeight)/imagePreviewHeight)*100.0f;
@@ -275,8 +276,8 @@ public class Scanner extends JFrame {
 
         //System.out.println("PD:"+PanelDerecho.getHeight()+"  /  IPL"+imagePreviwLabel.getHeight()+"  ////   OffSet: "+offsetHeight);
         //Se almacena el valor normalizado en un puntos (si fuese inpreciso se recomienda crear una clase que extienda puento y permmita guardar floats en vez de enteros)
-        initialSelectionPointNormalized = new Point((int)sectorProprotionInitialX,(int)sectorProprotionInitialY);
-        finalSelectionPointNormalized = new Point((int)sectorProprotionFinalX,(int)sectorProprotionFinalY);
+        initialSelectionPointNormalized = new normalizedPoint((float)sectorProprotionInitialX,(float)sectorProprotionInitialY);
+        finalSelectionPointNormalized = new normalizedPoint((float)sectorProprotionFinalX,(float)sectorProprotionFinalY);
 
         selectedAreaBox.setText(initialSelectionPointNormalized.toString() + " " + finalSelectionPointNormalized.toString());
     }
@@ -320,9 +321,8 @@ public class Scanner extends JFrame {
                 float imagePreviewHeight=(float)imagePreviwLabel.getIcon().getIconHeight();
 
                 //Calculo offset de la imagen respecto al cuadro de previsualizacion
-                int offsetHeight = (int) (((float)PanelDerecho.getHeight() - imagePreviewHeight) / 2.0f);
-                int offsetWith = (int) (((float)PanelDerecho.getWidth() - imagePreviewWith) / 2.0f);
-
+                int offsetHeight = (int) (((float)previewLayeredPanel.getHeight() - imagePreviewHeight) / 2.0f);
+                int offsetWith = (int) (((float)previewLayeredPanel.getWidth() - imagePreviewWith) / 2.0f);
 
                 initialSelectionPoint.setLocation(imagePreviewWith*((float)initialSelectionPointNormalized.getX())/100.0f,
                         (imagePreviewHeight*((float)initialSelectionPointNormalized.getY())/100.0f)+offsetHeight);
