@@ -35,6 +35,7 @@ public class Scanner extends JFrame {
     private JComboBox comboBox1;
     private JTextArea consoleLog;
     private JProgressBar progressBarScan;
+    protected JButton scanAreaButton;
     private JEditorPane editorPane1;
 
     //Imagenes
@@ -55,8 +56,8 @@ public class Scanner extends JFrame {
     private normalizedPoint finalSelectionPointNormalized;
     private Boolean leftClickPosition = false;
     JLabel selector;
-   // private Integer lastWindowsSizeHeight = 0;
-   // private Integer lastWindowsSizeWith = 0;
+    private final float scanPlateWith = 215.9f; //tamaño de la plancha completa
+    private final float scanPlateHeight = 297.0f; //tamaño de la plancha completa
 
     //Save scan
     private Path outputFolderScanPath;
@@ -78,6 +79,7 @@ public class Scanner extends JFrame {
         //Crea el tamño de la ventana en funcion de el tamaño de la pantalla
         normalizeWindowsSize();
         setDefaultValues();
+        progressBarScan.setStringPainted(true);
 
 
         scanButton.addActionListener(new ActionListener() {
@@ -164,6 +166,33 @@ public class Scanner extends JFrame {
                 }).start();
             }
         });
+        scanAreaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+
+                float selectedAreaTlX=((float)initialSelectionPointNormalized.getX()/100.0f)*scanPlateWith;
+                float selectedAreaTlY=((float)initialSelectionPointNormalized.getY()/100.0f)*scanPlateHeight;
+                float selectedAreaBrX=((float)finalSelectionPointNormalized.getX()/100.0f)*scanPlateWith;
+                float selectedAreaBrY=((float)finalSelectionPointNormalized.getY()/100.0f)*scanPlateHeight;
+
+                System.out.println("initialSelectionPointNormalized.getX(): "+initialSelectionPointNormalized.getX());
+
+                new Thread(new Runnable() {
+                    public void run() {
+                        runScan(Paths.get(texBoxFolderPath.getText()),
+                                texBoxFileName.getText(),
+                                Integer.parseInt(comboBoxResolution.getSelectedItem().toString()),
+                                comboBoxColorSpace.getSelectedItem().toString(),
+                                (int) selectedAreaTlX,
+                                (int) selectedAreaTlY,
+                                (int) selectedAreaBrX,
+                                (int) selectedAreaBrY);
+
+                    }
+                }).start();
+            }
+        });
+
     }
 
 //    public static void main(String[] args) {
@@ -203,7 +232,7 @@ public class Scanner extends JFrame {
     /////////////////INICIO PREVIEW//////////////
     private void initPreviewPanel() {
 
-
+        Border selectorBorder;
         // JLayeredPane previewLayeredPanel = new JLayeredPane();
         previewLayeredPanel.setBackground(Color.RED);
         //previewLayeredPanel.setBorder(BorderFactory.createTitledBorder("TEST-ELIMINAR AL TERMINAR"));
@@ -219,7 +248,8 @@ public class Scanner extends JFrame {
         //selector.setText("dfsdsfdsfdsfdsfds");
         selector.setBounds(0, 0, 100, 100);
         selector.setSize(0, 0);
-        Border selectorBorder = BorderFactory.createLineBorder(Color.BLUE, 2);
+        selectorBorder = BorderFactory.createDashedBorder(Color.BLACK,2,2);
+        //selectorBorder = BorderFactory.createLineBorder(Color.BLUE, 2);
         selector.setBorder(selectorBorder);
 
         imagePreviwLabel.setBounds(100, 200, 100, 200);
@@ -455,15 +485,27 @@ public class Scanner extends JFrame {
 
 
     ////////////////////////////LANZAR COMANDOS DE SISTEMA////////////////////////////
-    public void runScan(Path filePath, String fileName, int dpiResolution, String colorSpace) {
+
+    public void runScan(Path filePath, String fileName, int dpiResolution, String colorSpace, int tlx, int tly, int brx, int bry) {
+
+
+        //Command construction
+        String destinationPath = Path.of(filePath.toString(), fileName).toString();
+        String scanBashCommand="";
+        if(tlx<=-1){//Escaneo de plancha completa
+            scanBashCommand = "hp-scan " + "--mode=" + colorSpace + " --resolution=" + dpiResolution + " -f " + destinationPath;
+        }else{ //Escaneo de seccion
+            scanBashCommand = "hp-scan " + "--mode=" + colorSpace + " --resolution=" + dpiResolution + " -f " + destinationPath+" --tlx="+tlx+" --tly="+tly+" --brx="+brx+" --bry="+bry;
+        }
+
+
         System.out.println(Thread.currentThread().getName());
 
 
-        String destinationPath = Path.of(filePath.toString(), fileName).toString();
-        String scanBashCommand = "hp-scan " + "--mode=" + colorSpace + " --resolution=" + dpiResolution + " -f " + destinationPath;
         String result = null;
 
         try {
+            progressBarScan.setValue(0);
             System.out.println("Se va a lanzar el comando: " + scanBashCommand);
             Process process = Runtime.getRuntime().exec(scanBashCommand);
 
@@ -473,7 +515,7 @@ public class Scanner extends JFrame {
 
 
             char progressCharArray[] = new char[5];
-            int starCount = 0;
+            //int starCount = 0;
             int theCharNum = in.read();
             while (theCharNum != -1) {
                 char theChar = (char) theCharNum;
@@ -481,7 +523,7 @@ public class Scanner extends JFrame {
                 //System.out.print(theChar);
                 if (Character.compare(theChar, (char) ']') == 0) {
                     in.read(progressCharArray, 0, 5);
-                    progressBarScan.setValue(50);
+                    //progressBarScan.setValue(50);
                     String progresString = new String(progressCharArray);
                     progresString = progresString.replace(" ", "");
                     progresString = progresString.replace("%", "");
@@ -491,7 +533,7 @@ public class Scanner extends JFrame {
                 theCharNum = in.read();
 
             }
-            System.out.println("Nuemero de estrellas contadas: " + starCount);
+            //System.out.println("Nuemero de estrellas contadas: " + starCount);
 
 
         } catch (IOException e) {
@@ -502,6 +544,13 @@ public class Scanner extends JFrame {
         //procesoBashScan.run();
         System.out.println("Se ha terminado de escanear");
     }
+
+    public void runScan(Path filePath, String fileName, int dpiResolution, String colorSpace) {
+
+        runScan(filePath,fileName,dpiResolution,colorSpace,-1,-1,-1,-1);
+
+    }
+
 
 
 }
