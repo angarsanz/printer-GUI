@@ -86,16 +86,13 @@ public class Scanner extends JFrame {
         scanButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //JOptionPane.showMessageDialog(panel1, "Hola: "+screenSize.getHeight()+" - "+screenSize.getWidth());
-                //imagenPreviwLabel = new JLabel(new ImageIcon("C:\\Users\\angar\\IdeaProjects\\printer-GUI\\src\\main\\resources\\vlcsnap-2018-06-29-16h44m46s273.png"));
-                //updateViewerImage(1);
+
                 new Thread(new Runnable() {
                     public void run() {
                         runScan(Paths.get(texBoxFolderPath.getText()), texBoxFileName.getText(), Integer.parseInt(comboBoxResolution.getSelectedItem().toString()), comboBoxColorSpace.getSelectedItem().toString());
 
                     }
                 }).start();
-                //runScan(Paths.get(texBoxFolderPath.getText()), texBoxFileName.getText(), Integer.parseInt(comboBoxResolution.getSelectedItem().toString()), comboBoxColorSpace.getSelectedItem().toString());
 
 
             }
@@ -109,8 +106,7 @@ public class Scanner extends JFrame {
 
                 windowsSizeTexBox.setText(root.getWidth() + " X,   " + root.getHeight() + " Y");
                 updateViewerSize();
-                //Almacena el nuevo valor de la ventana
-                //setWindowsSize(root.getWidth(), root.getHeight());
+
             }
         });
 
@@ -126,6 +122,8 @@ public class Scanner extends JFrame {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
+
+
                 finalSelectionPoint = e.getPoint();
                 System.out.println("U: " + e.getPoint().toString());
                 updateSelectedArea();
@@ -267,9 +265,29 @@ public class Scanner extends JFrame {
 
     private void updateSelectedArea() {
 
+        //Correcion de valores (permite hacer seleccione ne cualquier direccion)
+        System.out.println(">>>>>>> " + initialSelectionPoint + " >>>> "+finalSelectionPoint);
+        if(initialSelectionPoint.getX() < finalSelectionPoint.getX()){
+            //Se deja igual
+        }if(initialSelectionPoint.getX() > finalSelectionPoint.getX()){
+            //Se intercambian
+            double auxInitial = initialSelectionPoint.getX();
+            initialSelectionPoint.setLocation(finalSelectionPoint.getX(),initialSelectionPoint.getY());
+            finalSelectionPoint.setLocation(auxInitial,finalSelectionPoint.getY());
+        }
+
+        if(initialSelectionPoint.getY() < finalSelectionPoint.getY()){
+//Se deja igual
+        }if(initialSelectionPoint.getY() > finalSelectionPoint.getY()){
+//Se intercambian
+            double auxInitial = initialSelectionPoint.getY();
+            initialSelectionPoint.setLocation(initialSelectionPoint.getX(),finalSelectionPoint.getY());
+            finalSelectionPoint.setLocation(finalSelectionPoint.getX(),auxInitial);
+        }
+        System.out.println("++++++++ " + initialSelectionPoint + " >>>> "+finalSelectionPoint);
         //private Point initialSelectionPoint;
         //private Point finalSelectionPoint;
-        System.out.println(">>>>>>>" + (int) initialSelectionPoint.getX());
+        //System.out.println(">>>>>>>" + (int) initialSelectionPoint.getX());
         selector.setBounds((int) initialSelectionPoint.getX(),
                 (int) initialSelectionPoint.getY(),
                 (int) (finalSelectionPoint.getX() - initialSelectionPoint.getX()),
