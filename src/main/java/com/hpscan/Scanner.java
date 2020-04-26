@@ -36,6 +36,7 @@ public class Scanner extends JFrame {
     private JTextArea consoleLog;
     private JProgressBar progressBarScan;
     protected JButton scanAreaButton;
+    protected JButton cleanSelectionButton;
     private JEditorPane editorPane1;
 
     //Imagenes
@@ -193,15 +194,21 @@ public class Scanner extends JFrame {
             }
         });
 
+        cleanSelectionButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                //Eliminacion de area seleccionada almacenada
+                initialSelectionPoint.setLocation(0,0);
+                finalSelectionPoint.setLocation(0,0);
+
+                //Refreco del interfaz (para que el usuario perciba los cambios)
+                updateSelectedArea();
+
+            }
+        });
     }
 
-//    public static void main(String[] args) {
-//        JFrame frame = new JFrame("Scanner");
-//        frame.setContentPane(new Scanner().root);
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.pack();
-//        frame.setVisible(true);
-//    }
+
 
 
     private void updateViewerImage(ImageIcon newImage) {
@@ -209,24 +216,6 @@ public class Scanner extends JFrame {
         System.out.println("Resulucionde la imagen: " + newImage.getIconWidth() + "X - " + newImage.getIconHeight() + "Y");
 
     }
-
-//    private void setWindowsSize(int newWindowsSizeWith, int newWindowsSizeHeight) {
-//        synchronized (lastWindowsSizeHeight) {
-//            lastWindowsSizeHeight = newWindowsSizeHeight;
-//
-//        }
-//        synchronized (lastWindowsSizeWith) {
-//            lastWindowsSizeWith = newWindowsSizeWith;
-//        }
-//    }
-//
-//    private Integer getLastWindowsWith() {
-//        return lastWindowsSizeWith;
-//    }
-//
-//    private Integer getLastWindowsHeight() {
-//        return lastWindowsSizeHeight;
-//    }
 
 
     /////////////////INICIO PREVIEW//////////////
